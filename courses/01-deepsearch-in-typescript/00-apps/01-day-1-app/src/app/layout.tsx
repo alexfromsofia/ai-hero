@@ -1,19 +1,26 @@
-import "~/styles/globals.css";
-
+import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
-import { type Metadata } from "next";
+import "~/styles/globals.css";
+import { SessionProvider } from "next-auth/react";
+import { AuthProvider } from "~/components/auth-context";
 
 export const metadata: Metadata = {
-  title: "AI App Example",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: "AI App Template",
+  description: "AI App Template",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body>{children}</body>
+    <html lang="en" className={GeistSans.variable}>
+      <body className="antialiased">
+        <SessionProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 }

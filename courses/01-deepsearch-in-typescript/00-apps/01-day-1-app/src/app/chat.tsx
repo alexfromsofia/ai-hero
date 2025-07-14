@@ -3,10 +3,8 @@
 import { ChatMessage } from "~/components/chat-message";
 import { SignInModal } from "~/components/sign-in-modal";
 import { useChat, type Message } from "@ai-sdk/react";
-
-interface ChatProps {
-  userName: string;
-}
+import { useAuth } from "~/components/auth-context";
+import { useState } from "react";
 
 const initialMessages: Message[] = [
   {
@@ -16,9 +14,22 @@ const initialMessages: Message[] = [
   },
 ];
 
-export const ChatPage = ({ userName }: ChatProps) => {
+export const ChatPage = () => {
+  const { userName, isAuthenticated } = useAuth();
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
-    useChat();
+    useChat({ initialMessages });
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!isAuthenticated) {
+      setShowSignInModal(true);
+      return;
+    }
+
+    handleSubmit(e);
+  };
 
   return (
     <>
@@ -41,7 +52,10 @@ export const ChatPage = ({ userName }: ChatProps) => {
         </div>
 
         <div className="border-t border-gray-700">
-          <form onSubmit={handleSubmit} className="mx-auto max-w-[65ch] p-4">
+          <form
+            onSubmit={handleFormSubmit}
+            className="mx-auto max-w-[65ch] p-4"
+          >
             <div className="flex gap-2">
               <input
                 value={input}
@@ -64,7 +78,10 @@ export const ChatPage = ({ userName }: ChatProps) => {
         </div>
       </div>
 
-      <SignInModal isOpen={false} onClose={() => {}} />
+      <SignInModal
+        isOpen={showSignInModal}
+        onClose={() => setShowSignInModal(false)}
+      />
     </>
   );
 };

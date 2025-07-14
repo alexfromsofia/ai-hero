@@ -1,8 +1,10 @@
+"use client";
+
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { auth } from "~/server/auth/index.ts";
 import { ChatPage } from "./chat.tsx";
 import { AuthButton } from "../components/auth-button.tsx";
+import { useAuth } from "~/components/auth-context";
 
 const chats = [
   {
@@ -13,10 +15,16 @@ const chats = [
 
 const activeChatId = "1";
 
-export default async function HomePage() {
-  const session = await auth();
-  const userName = session?.user?.name ?? "Guest";
-  const isAuthenticated = !!session?.user;
+export default function HomePage() {
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-950">
+        <div className="text-gray-300">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-950">
@@ -63,12 +71,23 @@ export default async function HomePage() {
         <div className="p-4">
           <AuthButton
             isAuthenticated={isAuthenticated}
-            userImage={session?.user?.image}
+            userImage={user?.image}
           />
         </div>
       </div>
 
-      <ChatPage userName={userName} />
+      <div className="flex flex-1 items-center justify-center">
+        {isAuthenticated ? (
+          <ChatPage />
+        ) : (
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-lg text-gray-300">
+              Sign in with Discord to start chatting!
+            </p>
+            <AuthButton isAuthenticated={false} userImage={null} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
