@@ -16,9 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={GeistSans.variable}>
-      <body className="antialiased">
+      <body className="flex min-h-screen flex-col antialiased">
         <SessionProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+          </AuthProvider>
         </SessionProvider>
       </body>
     </html>

@@ -33,7 +33,7 @@ export const ChatPage = () => {
 
   return (
     <>
-      <div className="flex flex-1 flex-col">
+      <div className="flex h-screen min-h-0 flex-1 flex-col">
         <div
           className="mx-auto w-full max-w-[65ch] flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500"
           role="log"
@@ -41,17 +41,12 @@ export const ChatPage = () => {
         >
           {messages.map((message, index) => {
             return (
-              <ChatMessage
-                key={index}
-                text={message.content}
-                role={message.role}
-                userName={userName}
-              />
+              <ChatMessage key={index} message={message} userName={userName} />
             );
           })}
         </div>
 
-        <div className="border-t border-gray-700">
+        <div className="sticky bottom-0 z-10 border-t border-gray-700 bg-gray-950">
           <form
             onSubmit={handleFormSubmit}
             className="mx-auto max-w-[65ch] p-4"
